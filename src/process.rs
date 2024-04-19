@@ -1,5 +1,6 @@
 use csv::Reader;
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "PascalCase")]
@@ -15,11 +16,14 @@ struct Player {
 
 pub fn process_csv(input: &str, output: &str) -> anyhow::Result<()> {
     let mut reader = Reader::from_path(input)?;
+    let header = reader.headers()?.clone();
     let mut result = vec![];
-    for record in reader.deserialize() {
-        let player: Player = record?;
-        result.push(player);
+    for record in reader.records() {
+        let player = record?;
+        let json_value = header.iter().zip(player.iter()).collect::<Value>();
+        result.push(json_value);
     }
+
     let output_json = serde_json::to_string_pretty(&result)?;
     std::fs::write(output, output_json)?;
     Ok(())
