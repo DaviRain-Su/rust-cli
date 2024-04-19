@@ -1,4 +1,5 @@
-use std::str::FromStr;
+use std::fmt;
+use std::{fmt::Display, str::FromStr};
 
 use clap::Parser;
 
@@ -19,7 +20,13 @@ pub enum SubCommand {
 pub enum OutputFormat {
     Json,
     Yaml,
-    Toml,
+    // Toml,
+}
+
+impl Display for OutputFormat {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", Into::<&'static str>::into(*self))
+    }
 }
 
 #[derive(Parser, Debug)]
@@ -27,10 +34,10 @@ pub struct CsvOpts {
     #[arg(short, long, value_parser = verify_file_exists)]
     pub input: String,
 
-    #[arg(short, long, default_value = "output.json")] // "output.json".into()
-    pub output: String,
+    #[arg(short, long)]
+    pub output: Option<String>,
 
-    #[arg(short, long, value_parser = parse_format)]
+    #[arg(long, value_parser = parse_format)]
     pub format: OutputFormat,
 
     #[arg(short, long, default_value_t = ',')]
@@ -57,7 +64,7 @@ impl From<OutputFormat> for &'static str {
         match f {
             OutputFormat::Json => "json",
             OutputFormat::Yaml => "yaml",
-            OutputFormat::Toml => "toml",
+            // OutputFormat::Toml => "toml",
         }
     }
 }
@@ -69,7 +76,7 @@ impl TryFrom<&str> for OutputFormat {
         match s.to_lowercase().as_str() {
             "json" => Ok(OutputFormat::Json),
             "yaml" => Ok(OutputFormat::Yaml),
-            "toml" => Ok(OutputFormat::Toml),
+            // "toml" => Ok(OutputFormat::Toml),
             v => anyhow::bail!("Unsupported format: {}", v),
         }
     }
@@ -82,7 +89,7 @@ impl FromStr for OutputFormat {
         match s.to_lowercase().as_str() {
             "json" => Ok(OutputFormat::Json),
             "yaml" => Ok(OutputFormat::Yaml),
-            "toml" => Ok(OutputFormat::Toml),
+            // "toml" => Ok(OutputFormat::Toml),
             v => anyhow::bail!("Unsupported format: {}", v),
         }
     }
