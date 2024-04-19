@@ -14,6 +14,8 @@ pub struct Opts {
 pub enum SubCommand {
     #[command(name = "csv", about = "Show csv or Convert CSV to other formats")]
     Csv(CsvOpts),
+    #[command(name = "genpass", about = "Generate a random password")]
+    GenPass(GenPassOpts),
 }
 
 #[derive(Debug, Parser, Clone, Copy)]
@@ -45,6 +47,24 @@ pub struct CsvOpts {
 
     #[arg(long, default_value_t = true)]
     pub header: bool,
+}
+
+#[derive(Parser, Debug)]
+pub struct GenPassOpts {
+    #[arg(long, default_value = "16")]
+    pub length: usize,
+
+    #[arg(short, long, default_value_t = true)]
+    pub uppercase: bool,
+
+    #[arg(short, long, default_value_t = true)]
+    pub lowercase: bool,
+
+    #[arg(long, default_value_t = true)]
+    pub number: bool,
+
+    #[arg(long, default_value_t = true)]
+    pub symbol: bool,
 }
 
 fn verify_file_exists(path: &str) -> Result<String, String> {
