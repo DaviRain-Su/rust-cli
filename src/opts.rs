@@ -48,13 +48,8 @@ fn verify_file_exists(path: &str) -> Result<String, String> {
     }
 }
 
-fn parse_format(s: &str) -> Result<OutputFormat, String> {
-    match s.to_lowercase().as_str() {
-        "json" => Ok(OutputFormat::Json),
-        "yaml" => Ok(OutputFormat::Yaml),
-        "toml" => Ok(OutputFormat::Toml),
-        _ => Err("Invalid format".into()),
-    }
+fn parse_format(s: &str) -> Result<OutputFormat, anyhow::Error> {
+    s.parse()
 }
 
 impl From<OutputFormat> for &'static str {
