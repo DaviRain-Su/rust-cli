@@ -1,35 +1,6 @@
+use clap::Parser;
 use std::fmt;
 use std::{fmt::Display, str::FromStr};
-
-use clap::Parser;
-
-#[derive(Parser, Debug)]
-#[command(name = "csv", version, about, author, long_about = None)]
-pub struct Opts {
-    #[command(subcommand)]
-    pub cmd: SubCommand,
-}
-
-#[derive(Parser, Debug)]
-pub enum SubCommand {
-    #[command(name = "csv", about = "Show csv or Convert CSV to other formats")]
-    Csv(CsvOpts),
-    #[command(name = "genpass", about = "Generate a random password")]
-    GenPass(GenPassOpts),
-}
-
-#[derive(Debug, Parser, Clone, Copy)]
-pub enum OutputFormat {
-    Json,
-    Yaml,
-    // Toml,
-}
-
-impl Display for OutputFormat {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}", Into::<&'static str>::into(*self))
-    }
-}
 
 #[derive(Parser, Debug)]
 pub struct CsvOpts {
@@ -49,29 +20,24 @@ pub struct CsvOpts {
     pub header: bool,
 }
 
-#[derive(Parser, Debug)]
-pub struct GenPassOpts {
-    #[arg(long, default_value = "16")]
-    pub length: usize,
-
-    #[arg(short, long, default_value_t = true)]
-    pub uppercase: bool,
-
-    #[arg(short, long, default_value_t = true)]
-    pub lowercase: bool,
-
-    #[arg(long, default_value_t = true)]
-    pub number: bool,
-
-    #[arg(long, default_value_t = true)]
-    pub symbol: bool,
-}
-
 fn verify_file_exists(path: &str) -> Result<String, String> {
     if std::path::Path::new(path).exists() {
         Ok(path.into())
     } else {
         Err("File does not exist".into())
+    }
+}
+
+#[derive(Debug, Parser, Clone, Copy)]
+pub enum OutputFormat {
+    Json,
+    Yaml,
+    // Toml,
+}
+
+impl Display for OutputFormat {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", Into::<&'static str>::into(*self))
     }
 }
 
