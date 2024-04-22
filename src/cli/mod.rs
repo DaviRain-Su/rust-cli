@@ -1,13 +1,16 @@
 use clap::Parser;
+use std::path::PathBuf;
 
 mod base64_opt;
 mod csv_opt;
 mod genpass_opt;
+mod http;
 mod text;
 
 pub use base64_opt::{Base64Format, Base64SubCommand};
 pub use csv_opt::{CsvOpts, OutputFormat};
 pub use genpass_opt::GenPassOpts;
+pub use http::{HttpServeOpts, HttpSubCommand};
 pub use text::{TextSignFormat, TextSubCommand};
 
 #[derive(Parser, Debug)]
@@ -27,6 +30,8 @@ pub enum SubCommand {
     Base64(Base64SubCommand),
     #[command(subcommand, about = "Text processing")]
     Text(TextSubCommand),
+    #[command(subcommand, about = "HTTP server")]
+    Http(HttpSubCommand),
 }
 
 fn verify_exists(filename: &str) -> Result<String, String> {
@@ -34,6 +39,15 @@ fn verify_exists(filename: &str) -> Result<String, String> {
         Ok(filename.into())
     } else {
         Err("File does not exist".into())
+    }
+}
+
+fn verify_path_exists(path: &str) -> Result<PathBuf, &'static str> {
+    let path = PathBuf::from(path);
+    if path.exists() && path.is_dir() {
+        Ok(path)
+    } else {
+        Err("Path does not exist or is not a directory")
     }
 }
 

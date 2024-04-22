@@ -5,11 +5,14 @@ use clap::Parser;
 use rcli::cli::TextSubCommand;
 use rcli::{
     process_base64_decode, process_base64_encode, process_csv, process_generator, process_genpass,
-    process_text_sign, process_text_verify, Base64SubCommand, Opts, SubCommand, TextSignFormat,
+    process_http_serve, process_text_sign, process_text_verify, Base64SubCommand, HttpSubCommand,
+    Opts, SubCommand, TextSignFormat,
 };
 use zxcvbn::zxcvbn;
 
-fn main() -> anyhow::Result<()> {
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    tracing_subscriber::fmt::init();
     let opts = Opts::parse();
 
     match opts.cmd {
@@ -71,6 +74,16 @@ fn main() -> anyhow::Result<()> {
                         fs::write(name.join("ed25519.pk"), &key[1])?;
                     }
                 }
+            }
+        },
+        SubCommand::Http(opts) => match opts {
+            HttpSubCommand::Serve(http_opts) => {
+                println!("{:?}", http_opts);
+                println!(
+                    "http server is running on http://0.0.0.0:{}",
+                    http_opts.port
+                );
+                process_http_serve(http_opts.path, http_opts.port).await?;
             }
         },
     }

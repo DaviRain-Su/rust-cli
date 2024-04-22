@@ -3,7 +3,7 @@ use std::fmt;
 use std::path::PathBuf;
 use std::{fmt::Display, str::FromStr};
 
-use super::verify_exists;
+use super::{verify_exists, verify_path_exists};
 
 #[derive(Parser, Debug)]
 pub enum TextSubCommand {
@@ -45,15 +45,6 @@ pub struct TextGenKeyOpts {
     pub format: TextSignFormat,
     #[arg(short, long, value_parser = verify_path_exists)]
     pub output: PathBuf,
-}
-
-fn verify_path_exists(path: &str) -> Result<PathBuf, &'static str> {
-    let path = PathBuf::from(path);
-    if path.exists() && path.is_dir() {
-        Ok(path)
-    } else {
-        Err("Path does not exist or is not a directory")
-    }
 }
 
 #[derive(Parser, Debug, Clone, Copy)]
