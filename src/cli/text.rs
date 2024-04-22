@@ -1,19 +1,22 @@
 use clap::Parser;
 use std::fmt;
+use std::path::PathBuf;
 use std::{fmt::Display, str::FromStr};
 
 use super::verify_exists;
 
 #[derive(Parser, Debug)]
 pub enum TextSubCommand {
-    #[command(about = "")]
-    Sign(SignOpts),
-    #[command(about = "")]
-    Verify(VerifyOpts),
+    #[command(about = "Sign a message with a private/shared key")]
+    Sign(TextSignOpts),
+    #[command(about = "Verify a sign message")]
+    Verify(TextVerifyOpts),
+    #[command(name = "generator", about = "Generate a new key")]
+    GenKey(TextGenKeyOpts),
 }
 
 #[derive(Parser, Debug)]
-pub struct SignOpts {
+pub struct TextSignOpts {
     /// Input file, use `-` for stdin
     #[arg(short, long, value_parser = verify_exists, default_value = "-")]
     pub input: String,
@@ -24,7 +27,7 @@ pub struct SignOpts {
 }
 
 #[derive(Parser, Debug)]
-pub struct VerifyOpts {
+pub struct TextVerifyOpts {
     /// Input file, use `-` for stdin
     #[arg(short, long, value_parser = verify_exists, default_value = "-")]
     pub input: String,
@@ -34,6 +37,23 @@ pub struct VerifyOpts {
     pub format: TextSignFormat,
     #[arg(short, long)]
     pub sig: String,
+}
+
+#[derive(Parser, Debug)]
+pub struct TextGenKeyOpts {
+    #[arg(short, long, default_value = "blake3", value_parser = parse_format)]
+    pub format: TextSignFormat,
+    #[arg(short, long, value_parser = verify_path_exists)]
+    pub output: PathBuf,
+}
+
+fn verify_path_exists(path: &str) -> Result<PathBuf, &'static str> {
+    let path = PathBuf::from(path);
+    if path.exists() && path.is_dir() {
+        Ok(path)
+    } else {
+        Err("Path does not exist or is not a directory")
+    }
 }
 
 #[derive(Parser, Debug, Clone, Copy)]

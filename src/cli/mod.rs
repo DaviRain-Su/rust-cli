@@ -1,14 +1,14 @@
 use clap::Parser;
 
-pub mod base64_opt;
-pub mod csv_opt;
-pub mod genpass_opt;
-pub mod text;
+mod base64_opt;
+mod csv_opt;
+mod genpass_opt;
+mod text;
 
-use base64_opt::Base64SubCommand;
-use csv_opt::CsvOpts;
-use genpass_opt::GenPassOpts;
-use text::TextSubCommand;
+pub use base64_opt::{Base64Format, Base64SubCommand};
+pub use csv_opt::{CsvOpts, OutputFormat};
+pub use genpass_opt::GenPassOpts;
+pub use text::{TextSignFormat, TextSubCommand};
 
 #[derive(Parser, Debug)]
 #[command(name = "csv", version, about, author, long_about = None)]
