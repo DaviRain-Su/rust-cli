@@ -1,8 +1,7 @@
+use crate::OutputFormat;
 use csv::Reader;
 use serde::{Deserialize, Serialize};
 use serde_json::Value;
-
-use crate::OutputFormat;
 
 #[derive(Serialize, Deserialize, Debug)]
 #[serde(rename_all = "PascalCase")]

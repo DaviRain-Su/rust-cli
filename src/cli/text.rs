@@ -1,9 +1,8 @@
+use super::{verify_exists, verify_path_exists};
 use clap::Parser;
 use std::fmt;
 use std::path::PathBuf;
 use std::{fmt::Display, str::FromStr};
-
-use super::{verify_exists, verify_path_exists};
 
 #[derive(Parser, Debug)]
 pub enum TextSubCommand {

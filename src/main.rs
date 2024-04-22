@@ -1,5 +1,3 @@
-use std::fs;
-
 // rcli csv -i input.csv -o output.json --header -d ','
 use clap::Parser;
 use rcli::cli::TextSubCommand;
@@ -8,6 +6,7 @@ use rcli::{
     process_http_serve, process_text_sign, process_text_verify, Base64SubCommand, HttpSubCommand,
     Opts, SubCommand, TextSignFormat,
 };
+use std::fs;
 use zxcvbn::zxcvbn;
 
 #[tokio::main]

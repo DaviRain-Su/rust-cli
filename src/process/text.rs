@@ -1,7 +1,3 @@
-use std::fs;
-use std::io::Read;
-use std::path::Path;
-
 use crate::cli::TextSignFormat;
 use crate::utils::get_data;
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine as _};
@@ -11,6 +7,9 @@ use ed25519_dalek::SigningKey;
 use ed25519_dalek::Verifier;
 use ed25519_dalek::VerifyingKey;
 use rand::rngs::OsRng;
+use std::fs;
+use std::io::Read;
+use std::path::Path;
 
 trait TextSign {
     /// Sign the data from reader

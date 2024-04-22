@@ -1,8 +1,7 @@
-use std::fmt;
-use std::{fmt::Display, str::FromStr};
-
 use super::verify_exists;
 use clap::Parser;
+use std::fmt;
+use std::{fmt::Display, str::FromStr};
 
 #[derive(Parser, Debug)]
 pub enum Base64SubCommand {
