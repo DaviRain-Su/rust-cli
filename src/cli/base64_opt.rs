@@ -1,7 +1,7 @@
 use std::fmt;
 use std::{fmt::Display, str::FromStr};
 
-use super::verify_file_exists;
+use super::verify_exists;
 use clap::Parser;
 
 #[derive(Parser, Debug)]
@@ -15,7 +15,7 @@ pub enum Base64SubCommand {
 #[derive(Parser, Debug)]
 pub struct Base64EncodeOpts {
     /// Input file, use `-` for stdin
-    #[arg(short, long, value_parser = verify_file_exists, default_value = "-")]
+    #[arg(short, long, value_parser = verify_exists, default_value = "-")]
     pub input: String,
     /// Support format: standard and urlsafe
     #[arg(long, value_parser = parse_base64_format, default_value = "standard")]
@@ -25,7 +25,7 @@ pub struct Base64EncodeOpts {
 #[derive(Parser, Debug)]
 pub struct Base64DecodeOpts {
     /// Input file, use `-` for stdin
-    #[arg(short, long, value_parser = verify_file_exists, default_value = "-")]
+    #[arg(short, long, value_parser = verify_exists, default_value = "-")]
     pub input: String,
     /// Support format: standard and urlsafe
     #[arg(long, value_parser = parse_base64_format, default_value = "standard")]

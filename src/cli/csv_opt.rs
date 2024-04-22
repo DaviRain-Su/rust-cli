@@ -1,4 +1,4 @@
-use super::verify_file_exists;
+use super::verify_exists;
 use clap::Parser;
 use std::fmt;
 use std::{fmt::Display, str::FromStr};
@@ -6,7 +6,7 @@ use std::{fmt::Display, str::FromStr};
 #[derive(Parser, Debug)]
 pub struct CsvOpts {
     /// csv input file
-    #[arg(short, long, value_parser = verify_file_exists)]
+    #[arg(short, long, value_parser = verify_exists)]
     pub input: String,
     /// csv output file
     #[arg(short, long)]
