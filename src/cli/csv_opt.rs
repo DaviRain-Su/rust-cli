@@ -5,18 +5,19 @@ use std::{fmt::Display, str::FromStr};
 
 #[derive(Parser, Debug)]
 pub struct CsvOpts {
+    /// csv input file
     #[arg(short, long, value_parser = verify_file_exists)]
     pub input: String,
-
+    /// csv output file
     #[arg(short, long)]
     pub output: Option<String>,
-
+    /// output format: json, yaml
     #[arg(long, value_parser = parse_format)]
     pub format: OutputFormat,
-
+    /// delimiter
     #[arg(short, long, default_value_t = ',')]
     pub delimiter: char,
-
+    /// header
     #[arg(long, default_value_t = true)]
     pub header: bool,
 }
