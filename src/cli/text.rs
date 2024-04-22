@@ -1,10 +1,14 @@
 use super::{verify_exists, verify_path_exists};
+use crate::process::{process_generator, process_text_sign, process_text_verify};
+use crate::CmdExecuter;
 use clap::Parser;
+use enum_dispatch::enum_dispatch;
 use std::fmt;
 use std::path::PathBuf;
 use std::{fmt::Display, str::FromStr};
 
 #[derive(Parser, Debug)]
+#[enum_dispatch(CmdExecuter)]
 pub enum TextSubCommand {
     #[command(about = "Sign a message with a private/shared key")]
     Sign(TextSignOpts),
@@ -25,6 +29,14 @@ pub struct TextSignOpts {
     pub format: TextSignFormat,
 }
 
+impl CmdExecuter for TextSignOpts {
+    async fn execute(self) -> anyhow::Result<()> {
+        let sig = process_text_sign(&self.input, &self.key, self.format)?;
+        println!("{}", sig);
+        Ok(())
+    }
+}
+
 #[derive(Parser, Debug)]
 pub struct TextVerifyOpts {
     /// Input file, use `-` for stdin
@@ -38,12 +50,38 @@ pub struct TextVerifyOpts {
     pub sig: String,
 }
 
+impl CmdExecuter for TextVerifyOpts {
+    async fn execute(self) -> anyhow::Result<()> {
+        let verifyed = process_text_verify(&self.input, &self.key, self.format, &self.sig)?;
+        println!("{}", verifyed);
+        Ok(())
+    }
+}
+
 #[derive(Parser, Debug)]
 pub struct TextGenKeyOpts {
     #[arg(short, long, default_value = "blake3", value_parser = parse_format)]
     pub format: TextSignFormat,
     #[arg(short, long, value_parser = verify_path_exists)]
     pub output: PathBuf,
+}
+
+impl CmdExecuter for TextGenKeyOpts {
+    async fn execute(self) -> anyhow::Result<()> {
+        let key = process_generator(self.format)?;
+        match self.format {
+            TextSignFormat::Blake3 => {
+                let name = self.output.join("blake3.txt");
+                tokio::fs::write(name, &key[0]).await?;
+            }
+            TextSignFormat::Ed25519 => {
+                let name = &self.output;
+                tokio::fs::write(name.join("ed25519.sk"), &key[0]).await?;
+                tokio::fs::write(name.join("ed25519.pk"), &key[1]).await?;
+            }
+        }
+        Ok(())
+    }
 }
 
 #[derive(Parser, Debug, Clone, Copy)]

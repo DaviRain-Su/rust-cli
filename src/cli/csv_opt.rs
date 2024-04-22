@@ -1,4 +1,6 @@
 use super::verify_exists;
+use crate::process::process_csv;
+use crate::CmdExecuter;
 use clap::Parser;
 use std::fmt;
 use std::{fmt::Display, str::FromStr};
@@ -20,6 +22,17 @@ pub struct CsvOpts {
     /// header
     #[arg(long, default_value_t = true)]
     pub header: bool,
+}
+
+impl CmdExecuter for CsvOpts {
+    async fn execute(self) -> anyhow::Result<()> {
+        let output = if let Some(output) = self.output {
+            output
+        } else {
+            format!("output.{}", self.format)
+        };
+        process_csv(&self.input, output, self.format)
+    }
 }
 
 #[derive(Debug, Parser, Clone, Copy)]

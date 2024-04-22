@@ -1,9 +1,13 @@
 use super::verify_exists;
+use crate::process::{process_base64_decode, process_base64_encode};
+use crate::CmdExecuter;
 use clap::Parser;
+use enum_dispatch::enum_dispatch;
 use std::fmt;
 use std::{fmt::Display, str::FromStr};
 
 #[derive(Parser, Debug)]
+#[enum_dispatch(CmdExecuter)]
 pub enum Base64SubCommand {
     #[command(name = "encode", about = "Encode a string to Base64")]
     Base64Encode(Base64EncodeOpts),
@@ -21,6 +25,14 @@ pub struct Base64EncodeOpts {
     pub format: Base64Format,
 }
 
+impl CmdExecuter for Base64EncodeOpts {
+    async fn execute(self) -> anyhow::Result<()> {
+        let encode = process_base64_encode(&self.input, self.format)?;
+        println!("{}", encode);
+        Ok(())
+    }
+}
+
 #[derive(Parser, Debug)]
 pub struct Base64DecodeOpts {
     /// Input file, use `-` for stdin
@@ -29,6 +41,16 @@ pub struct Base64DecodeOpts {
     /// Support format: standard and urlsafe
     #[arg(long, value_parser = parse_base64_format, default_value = "standard")]
     pub format: Base64Format,
+}
+
+impl CmdExecuter for Base64DecodeOpts {
+    async fn execute(self) -> anyhow::Result<()> {
+        let decode = process_base64_decode(&self.input, self.format)?;
+        // TODO: decode data might not string,
+        // so we need to handle this case(but for this example, we assume it is)
+        println!("{}", String::from_utf8(decode)?);
+        Ok(())
+    }
 }
 
 #[derive(Parser, Debug, Clone, Copy)]
