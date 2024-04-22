@@ -1,3 +1,4 @@
+use super::verify_file_exists;
 use clap::Parser;
 use std::fmt;
 use std::{fmt::Display, str::FromStr};
@@ -18,14 +19,6 @@ pub struct CsvOpts {
 
     #[arg(long, default_value_t = true)]
     pub header: bool,
-}
-
-fn verify_file_exists(path: &str) -> Result<String, String> {
-    if std::path::Path::new(path).exists() {
-        Ok(path.into())
-    } else {
-        Err("File does not exist".into())
-    }
 }
 
 #[derive(Debug, Parser, Clone, Copy)]
