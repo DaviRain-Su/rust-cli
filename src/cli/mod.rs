@@ -7,6 +7,7 @@ mod chacha20poly1305;
 mod csv_opt;
 mod genpass_opt;
 mod http;
+mod jwt;
 mod text;
 
 pub use base64_opt::{Base64DecodeOpts, Base64EncodeOpts, Base64Format, Base64SubCommand};
@@ -16,6 +17,7 @@ pub use chacha20poly1305::{
 pub use csv_opt::{CsvOpts, OutputFormat};
 pub use genpass_opt::GenPassOpts;
 pub use http::{HttpServeOpts, HttpSubCommand};
+pub use jwt::{JwtSignOpts, JwtSubCommand, JwtVerifyOpts};
 pub use text::{TextGenKeyOpts, TextSignFormat, TextSignOpts, TextSubCommand, TextVerifyOpts};
 
 #[derive(Parser, Debug)]
@@ -40,6 +42,8 @@ pub enum SubCommand {
     Http(HttpSubCommand),
     #[command(subcommand, about = "Encrypt or Decrypt text with ChaCha20Poly1305")]
     Chacha20Poly1305(Chacha20Poly1305SubCommand),
+    #[command(subcommand, about = "JWT sign or verify")]
+    Jwt(JwtSubCommand),
 }
 
 fn verify_exists(filename: &str) -> Result<String, String> {
