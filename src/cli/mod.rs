@@ -3,12 +3,16 @@ use enum_dispatch::enum_dispatch;
 use std::path::PathBuf;
 
 mod base64_opt;
+mod chacha20poly1305;
 mod csv_opt;
 mod genpass_opt;
 mod http;
 mod text;
 
 pub use base64_opt::{Base64DecodeOpts, Base64EncodeOpts, Base64Format, Base64SubCommand};
+pub use chacha20poly1305::{
+    Chacha20Poly1305SubCommand, TextChacCha20GenKeyOpts, TextDecryptOpts, TextEncryptOpts,
+};
 pub use csv_opt::{CsvOpts, OutputFormat};
 pub use genpass_opt::GenPassOpts;
 pub use http::{HttpServeOpts, HttpSubCommand};
@@ -34,6 +38,8 @@ pub enum SubCommand {
     Text(TextSubCommand),
     #[command(subcommand, about = "HTTP server")]
     Http(HttpSubCommand),
+    #[command(subcommand, about = "Encrypt or Decrypt text with ChaCha20Poly1305")]
+    Chacha20Poly1305(Chacha20Poly1305SubCommand),
 }
 
 fn verify_exists(filename: &str) -> Result<String, String> {
